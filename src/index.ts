@@ -14,8 +14,8 @@ AWS.config.update({
 
 const s3 = new AWS.S3();
 
-// markdownのテキストからimg URLを抽出し配列にいれて返す
-const extractImgUrls = (markdownText: string) => {
+// markdown からimg URLを抽出し配列にいれて返す
+export const extractImgUrls = (markdownText: string) => {
     const imgUrls = []
     const lines = markdownText.split("\n")
     for (const line of lines) {
@@ -26,6 +26,21 @@ const extractImgUrls = (markdownText: string) => {
     }
     return imgUrls
 }
+
+// HTMLのimgタグからsrcを抽出し配列にいれて返す
+export const extractImgSrcs = (htmlText: string) => {
+    const imgSrcs = []
+
+    const lines = htmlText.split("\n")
+    for (const line of lines) {
+        if (line.startsWith("<img") && line.endsWith(">")) {
+            const src = line.split("src=\"")[1].split("\"")[0]
+            imgSrcs.push(src)
+        }
+    }
+    return imgSrcs
+}
+
 
 const uploadFileToS3 = async (bucket: string, key: string, filePath: string): Promise<void> => {
     try {
