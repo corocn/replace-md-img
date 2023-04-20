@@ -24,6 +24,7 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "devDependencies": {
+    "@types/node": "^18.15.12",
     "aws-sdk": "^2.1361.0",
     "tsup": "^6.7.0",
     "typescript": "^5.0.4"

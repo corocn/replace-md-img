@@ -1,5 +1,5 @@
 import * as AWS from 'aws-sdk';
-import * as fs from 'fs';
+import fs = require('fs');
 
 export const convert = (markdownText: string) => {
     console.log("Hello World!")
@@ -14,8 +14,29 @@ AWS.config.update({
 
 const s3 = new AWS.S3();
 
+// extractImgUrls と extractImgSrcs を使って、URLを抽出する
+export const extractImageUrls = (markdownText: string): string[] => {
+    const imgUrls = extractMarkdownImageUrls(markdownText)
+    const imgSrcs = extractHTMLImageTagUrls(markdownText)
+
+    // imgUrls と imgSrcs をマージ
+    for (const imgSrc of imgSrcs) { imgUrls.push(imgSrc) }
+
+    // imgUrls から重複を削除
+    const uniqueImgUrls = Array.from(new Set(imgUrls))
+
+    // 拡張子をjpg/JPEG/jpeg/png/PNGに絞る
+    const filteredImgUrls = uniqueImgUrls.filter((url) => {
+        const ext = url.split(".").pop()
+        return ext === "jpg" || ext === "jpeg" || ext === "png" || ext === "JPG" || ext === "JPEG" || ext === "PNG"
+    })
+
+    return filteredImgUrls;
+}
+
+
 // markdown からimg URLを抽出し配列にいれて返す
-export const extractImgUrls = (markdownText: string) => {
+const extractMarkdownImageUrls = (markdownText: string): string[] => {
     const imgUrls = []
     const lines = markdownText.split("\n")
     for (const line of lines) {
@@ -28,7 +49,7 @@ export const extractImgUrls = (markdownText: string) => {
 }
 
 // HTMLのimgタグからsrcを抽出し配列にいれて返す
-export const extractImgSrcs = (htmlText: string) => {
+const extractHTMLImageTagUrls = (htmlText: string): string[] => {
     const imgSrcs = []
 
     const lines = htmlText.split("\n")
