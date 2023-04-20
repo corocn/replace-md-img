@@ -1,22 +1,23 @@
-import { assertEquals } from "https://deno.land/std@0.184.0/testing/asserts.ts";
-import { extractImageUrls } from "./index.ts";
+import { expect, test } from 'vitest'
+import { extractImageUrls } from "./index";
 
-
-Deno.test("extractImageUrls", () => {
-    const markdownText = `
+const sampleMarkdown = `
 # Hello World!
-<img src="https://hogehoge.s3-ap-northeast-1.amazonaws.com/hoge.jpg">
-<img src="https://hogehoge.s3-ap-northeast-1.amazonaws.com/hoge.jpeg">
-<img src="https://hogehoge.s3-ap-northeast-1.amazonaws.com/hoge.JPEG">
-<img src="https://hogehoge.s3-ap-northeast-1.amazonaws.com/hoge.png">
-<img src="https://hogehoge.s3-ap-northeast-1.amazonaws.com/hoge.PNG">
+![Sample](https://hogehoge.s3-ap-northeast-1.amazonaws.com/hoge1.jpg)
+![Sample](https://hogehoge.s3-ap-northeast-1.amazonaws.com/hoge1.png)
 
-![Sample](https://hogehoge.s3-ap-northeast-1.amazonaws.com/hoge.png)
+<img src="https://hogehoge.s3-ap-northeast-1.amazonaws.com/hoge2.jpg">
+<img src="https://hogehoge.s3-ap-northeast-1.amazonaws.com/hoge2.png">
 `
-    // const expected = [
-    //   'https://hogehoge.s3-ap-northeast-1.amazonaws.com/.jpg',
-    //   'https://hogehoge.s3-ap-northeast-1.amazonaws.com/.png'
-    // ]
 
-  console.debug(extractImageUrls(markdownText))
-});
+test('extractImageUrls', () => {
+  const markdownText = sampleMarkdown;
+  const result = extractImageUrls(markdownText)
+
+  expect(result).toEqual([
+    'https://hogehoge.s3-ap-northeast-1.amazonaws.com/hoge1.jpg',
+    'https://hogehoge.s3-ap-northeast-1.amazonaws.com/hoge1.png',
+    'https://hogehoge.s3-ap-northeast-1.amazonaws.com/hoge2.jpg',
+    'https://hogehoge.s3-ap-northeast-1.amazonaws.com/hoge2.png',
+  ])
+})
